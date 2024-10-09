@@ -60,7 +60,6 @@ public class BallHandler : MonoBehaviour
         ball = null;
 
         Invoke(nameof(DetachBall), detachDelay);
-        Invoke(nameof(SpawnNewBall), respawnDelay);
 
     }
 
@@ -68,5 +67,7 @@ public class BallHandler : MonoBehaviour
     {
         hook.enabled = false;
         hook = null;
+
+        Invoke(nameof(SpawnNewBall), respawnDelay);
     }
 }
