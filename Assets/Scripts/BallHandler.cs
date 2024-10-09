@@ -5,12 +5,12 @@ using UnityEngine.InputSystem;
 public class BallHandler : MonoBehaviour
 {
 
-    [SerializeField] private GameObject ballPref;
+    [SerializeField] private GameObject ballPrefab;
     [SerializeField] private Rigidbody2D pivot;
     [SerializeField] private float detachDelay = 0.15f;
     [SerializeField] private float respawnDelay = 1f;
     
-    private Rigidbody2D ballPrefab;
+    private Rigidbody2D ball;
     private SpringJoint2D hook;
     private Camera mainCamera;
 
@@ -24,7 +24,7 @@ public class BallHandler : MonoBehaviour
     }
     private void Update()
     {
-        if(ballPrefab == null){
+        if(ball == null){
             return;
         }
         if(!Touchscreen.current.primaryTouch.press.isPressed){
@@ -35,20 +35,20 @@ public class BallHandler : MonoBehaviour
             return;
         }
         isDragging = true;
-        ballPrefab.bodyType = RigidbodyType2D.Kinematic;
+        ball.bodyType = RigidbodyType2D.Kinematic;
 
         Vector2 touchpos = Touchscreen.current.primaryTouch.position.ReadValue();
 
         Vector3 worldPos = mainCamera.ScreenToWorldPoint(touchpos);
 
-        ballPrefab.position = worldPos;
+        ball.position = worldPos;
 
     }
 
     private void SpawnNewBall() {
-        GameObject ballInstance = Instantiate(ballPref, pivot.position, Quaternion.identity);
+        GameObject ballInstance = Instantiate(ballPrefab, pivot.position, Quaternion.identity);
 
-        ballPrefab = ballInstance.GetComponent<Rigidbody2D>();
+        ball = ballInstance.GetComponent<Rigidbody2D>();
         hook = ballInstance.GetComponent<SpringJoint2D>();
 
         hook.connectedBody = pivot;
@@ -56,8 +56,8 @@ public class BallHandler : MonoBehaviour
 
     private void LaunchBall()
     {
-        ballPrefab.bodyType = RigidbodyType2D.Dynamic;
-        ballPrefab = null;
+        ball.bodyType = RigidbodyType2D.Dynamic;
+        ball = null;
 
         Invoke(nameof(DetachBall), detachDelay);
         Invoke(nameof(SpawnNewBall), respawnDelay);
